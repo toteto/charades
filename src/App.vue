@@ -2,19 +2,25 @@
   <div id="app">
     <div class="columns is-centered">
       <div class="column is-narrow">
-        <GameHeader class="section" />
-        <GameStarter
-          v-if="!hostController && !clientData"
-          v-bind:predefinedGameId="predefinedGameId"
-          v-on:host-game="onHostGame"
-          v-on:join-game="onJoinGame"
-        />
-        <GameHost v-if="hostController" v-bind:hostGameController="hostController" />
-        <GameClient
-          v-if="clientData"
-          v-bind:gameId="clientData.gameId"
-          v-bind:clientGameController="clientData.controller"
-        />
+        <section class="section">
+          <GameHeader />
+        </section>
+        <section class="section" style="padding-top: 0" v-if="!hostController && !clientData">
+          <GameStarter
+            v-bind:predefinedGameId="predefinedGameId"
+            v-on:host-game="onHostGame"
+            v-on:join-game="onJoinGame"
+          />
+        </section>
+        <section class="section" style="padding: 0.5rem 1.5rem" v-if="hostController">
+          <GameHost v-bind:hostGameController="hostController" />
+        </section>
+        <section class="section" style="padding-top: 0.5rem" v-if="clientData">
+          <GameClient
+            v-bind:gameId="clientData.gameId"
+            v-bind:clientGameController="clientData.controller"
+          />
+        </section>
       </div>
     </div>
   </div>

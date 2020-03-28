@@ -1,6 +1,6 @@
 <template>
-  <div class="section">
-    <div class="field is-grouped is-grouped-multiline">
+  <div>
+    <div class="field is-grouped">
       <div class="control" v-for="player in players" :key="player.name">
         <div class="tags has-addons are-small">
           <span class="tag" v-bind:class="{ 'is-info': player.name === currentPlayer }">{{
