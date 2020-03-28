@@ -9,10 +9,11 @@
 
     <p class="label">Join existing game</p>
     <b-field grouped>
-      <b-input placeholder="Game ID" v-model="gameId"></b-input>
+      <b-input class="is-expanded" placeholder="Game ID" v-model="gameId"></b-input>
       <p class="control">
         <button
-          class="button"
+          class="button is-primary"
+          v-bind:disabled="!validJoinInfo"
           v-on:click="$emit('join-game', { gameId: gameId, name: name, words: words })"
         >
           Join
@@ -22,7 +23,8 @@
     <b-field label="Or, host new one">
       <p class="control">
         <button
-          class="button is-primary"
+          class="button"
+          v-bind:disabled="!validHostInfo"
           v-on:click="$emit('host-game', { name: name, words: words })"
         >
           Host new game
@@ -43,6 +45,14 @@ export default {
       name: "",
       words: []
     };
+  },
+  computed: {
+    validJoinInfo() {
+      return this.validHostInfo && this.gameId.trim().length > 0;
+    },
+    validHostInfo() {
+      return this.name.trim().length > 0 && this.words.length > 0;
+    }
   }
 };
 </script>

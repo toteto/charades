@@ -7,12 +7,12 @@ const urlSearchParams = new URLSearchParams(new URL(window.location.href).search
  */
 export function wordBowlPeer() {
   let signalingServerConfig = null;
-  signalingServerConfig = {
-    host: "peerjs-server.toteto.tech",
-    key: "d122cb81-885f-43a3-9bb3-43fd8a111bc1",
-    secure: true
-  };
   if (urlSearchParams.has("key")) {
+    signalingServerConfig = {
+      host: "peerjs-server.toteto.tech",
+      key: urlSearchParams.get("key"),
+      secure: true
+    };
   }
 
   return new Peer({
