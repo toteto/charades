@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="columns is-centered">
-      <div class="column is-half">
+      <div class="column is-narrow">
         <GameHeader class="section" />
         <GameStarter
           v-if="!hostController && !clientData"
