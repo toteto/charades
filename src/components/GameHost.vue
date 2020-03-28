@@ -52,8 +52,12 @@ export default {
       }
     },
     copyJoinUrl() {
+      const url = new URL(location.href);
+      const searchParams = new URLSearchParams(url.search);
+      searchParams.append("gameId", this.gameId);
+
       navigator.clipboard
-        .writeText(this.gameId)
+        .writeText(`${url.origin}${url.pathname}?${searchParams.toString()}`)
         .then(() => {
           this.$buefy.toast.open({ message: "Game URL copied to clipboard", type: "is-info" });
         })
