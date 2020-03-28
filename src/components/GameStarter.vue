@@ -48,7 +48,7 @@ export default {
   },
   computed: {
     validJoinInfo() {
-      return this.validHostInfo && this.gameId.trim().length > 0;
+      return this.validHostInfo && this.gameId?.trim().length > 0;
     },
     validHostInfo() {
       return this.name.trim().length > 0 && this.words.length > 0;
