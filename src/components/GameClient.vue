@@ -3,7 +3,9 @@
     <div class="field is-grouped is-grouped-multiline">
       <div class="control" v-for="player in players" :key="player.name">
         <div class="tags has-addons are-small">
-          <span class="tag">{{ player.name }}</span>
+          <span class="tag" v-bind:class="{ 'is-info': player.name === currentPlayer }">{{
+            player.name
+          }}</span>
           <span class="tag is-info">{{ player.score }}</span>
         </div>
       </div>
