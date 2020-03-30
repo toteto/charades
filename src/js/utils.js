@@ -1,19 +1,14 @@
 import Peer from "peerjs";
 
-const urlSearchParams = new URLSearchParams(new URL(window.location.href).search);
-
 /**
  * @returns {Peer}
  */
 export function wordBowlPeer() {
-  let signalingServerConfig = null;
-  if (urlSearchParams.has("key")) {
-    signalingServerConfig = {
-      host: "peerjs-server.toteto.tech",
-      key: urlSearchParams.get("key"),
-      secure: true
-    };
-  }
+  const signalingServerConfig = {
+    host: "peerjs-server.toteto.tech",
+    port: 9443,
+    secure: true
+  };
 
   return new Peer({
     ...signalingServerConfig,
