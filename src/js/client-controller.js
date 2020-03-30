@@ -35,7 +35,6 @@ export default class ClientController {
       conn.on("open", () => {
         clearTimeout(timeoutId);
         this._registerForGameStateUpdates(conn);
-        this._registerForIncomingHostConnection(conn);
         resolve();
       });
     });
@@ -83,15 +82,6 @@ export default class ClientController {
       } else {
         this._onNoCurrentTurnReceiver?.();
       }
-    });
-  }
-
-  _registerForIncomingHostConnection(oldConn) {
-    this._peer.on("connection", newConn => {
-      oldConn.close();
-      this._registerForGameStateUpdates(newConn);
-      this._registerForIncomingHostConnection(newConn);
-      newConn.on("open", () => {});
     });
   }
 

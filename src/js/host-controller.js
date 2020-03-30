@@ -25,6 +25,23 @@ export default class WordBowlHostController {
     this._registerForIncomingGameJoins();
   }
 
+  restore(persistedHostState) {
+    this._hostState.players = [...persistedHostState.players];
+    this._hostState.currentTurn = persistedHostState.currentTurn && {
+      turnId: persistedHostState.currentTurn.turnId,
+      player: this._hostState.players.find(p => p.name === persistedHostState.currentTurn.player),
+      word: this._hostState.players
+        .flatMap(p => p.words)
+        .find(
+          w =>
+            w.value === persistedHostState.currentTurn.word.value &&
+            w.guessed === persistedHostState.currentTurn.word.guessed
+        )
+    };
+
+    console.log(this._hostState);
+  }
+
   /**
    * @returns {Promise<string>} the hosted game ID
    */
@@ -66,7 +83,7 @@ export default class WordBowlHostController {
       conn.on("open", () => {
         let player = this._hostState.players.find(p => p.name === conn.metadata.name);
         if (player) {
-          player.conn.close();
+          player.conn?.close();
           player.conn = conn;
         } else {
           player = {
@@ -79,44 +96,9 @@ export default class WordBowlHostController {
         }
         console.log(`Player '${player.name}' has joined.`);
 
-        this._registerForPlayerDisconnect(player);
         this._registerForPlayerActions(player);
         this._sendPublicStateToPlayers();
       });
-    });
-  }
-
-  /** @param {Player} player */
-  _registerForPlayerDisconnect(player) {
-    // TODO: not sure if needed, may be useless error handling.
-    // Should be checked with WebRTC protocol.
-    player.conn.on("close", () => {
-      player.conn.close();
-      console.warn(`${player.name} has disconnected`);
-      if (this._hostState.inProgress) {
-        Promise.resolve(
-          this._peer.connect(player.conn.peer, {
-            serialization: "json",
-            reliable: true
-          })
-        ).then(newConn => {
-          console.log(`Reconnecting with ${player.name}.`);
-          console.log(`${player.name} has reconnected.`);
-          player.conn = newConn;
-          this._registerForPlayerDisconnect(player);
-          this._registerForPlayerActions(player);
-          newConn.on("open", () => {
-            this._sendPublicStateToPlayers();
-          });
-        });
-      } else {
-        player.conn.close();
-        const playerIndex = this._hostState.players.indexOf(player);
-        if (playerIndex > -1) {
-          this._hostState.players.splice(playerIndex, 1);
-          this._sendPublicStateToPlayers();
-        }
-      }
     });
   }
 
@@ -163,7 +145,6 @@ export default class WordBowlHostController {
       players: this._hostState.players.map(p => ({ name: p.name, score: p.score }))
     };
 
-    debugger;
     const currentTurn = this._hostState.currentTurn;
     this._hostState.players.forEach(player => {
       const playerState = Object.assign({}, mutualPlayerState);
@@ -177,7 +158,19 @@ export default class WordBowlHostController {
         }
       }
 
-      player.conn.send(playerState);
+      player.conn?.send(playerState);
+    });
+
+    localStorage.persistedHostState = JSON.stringify({
+      state: {
+        players: this._hostState.players.map(p => Object.assign({}, p, { conn: null })),
+        currentTurn:
+          this._hostState.currentTurn &&
+          Object.assign({}, this._hostState.currentTurn, {
+            player: this._hostState.currentTurn.player.name
+          })
+      },
+      timestamp: Date.now()
     });
   }
 }

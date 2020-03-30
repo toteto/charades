@@ -40,10 +40,37 @@ export default {
     const urlSearchParams = new URLSearchParams(new URL(window.location.href).search);
 
     return {
+      /**
+       * @type {string}
+       */
       predefinedGameId: urlSearchParams.get("gameId"),
+      /**
+       * @type {WordBowlHostController}
+       */
       hostController: null,
+      /**
+       * @type {ClientController}
+       */
       clientData: null
     };
+  },
+  created() {
+    const { timestamp, state } =
+      localStorage.persistedHostState && JSON.parse(localStorage.persistedHostState);
+
+    if (timestamp > Date.now() - 15 * 60 * 100 /** 15 minutes */) {
+      this.$buefy.snackbar.open({
+        message:
+          "You have hosted a game very recenly. Would you like to continue hosting that game?",
+        position: "is-top",
+        actionText: "Yes",
+        duration: 5000,
+        onAction: () => {
+          this.hostController = WordBowlHostController.create();
+          this.hostController.restore(state);
+        }
+      });
+    }
   },
 
   methods: {
