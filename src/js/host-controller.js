@@ -117,7 +117,6 @@ export default class WordBowlHostController {
   }
 
   _updateStateForNextTurn() {
-    debugger;
     const remainingWords = this._hostState.players.flatMap(p => p.words.filter(w => !w.guessed));
     if (remainingWords.length > 0) {
       this._hostState.currentTurn = {
